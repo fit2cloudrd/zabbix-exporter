@@ -115,6 +115,7 @@ def dump_metrics(collector):
                                         sortfield='key_'):
         click.echo('{host:20}{key} = {value}\n{name:>20}'.format(
             host=collector.host_mapping.get(item['hostid'], item['hostid']),
+            addr=collector.host_addr_mapping.get(item['hostid'], item['hostid']),
             key=item['key_'],
             value=item['lastvalue'],
             name=item['name']

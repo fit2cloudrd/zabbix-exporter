@@ -55,6 +55,9 @@ class ZabbixCollector(object):
         self.host_mapping = {row['hostid']: row['name']
                              for row in self.zapi.host.get(output=['hostid', 'name'])}
 
+        self.host_addr_mapping = {row['hostid']: row['ip']
+                             for row in self.zapi.hostinterface.get(output=['hostid', 'ip'])}
+
     def process_metric(self, item):
         if not self.is_exportable(item):
             logger.debug('Dropping unsupported metric %s', item['key_'])
@@ -96,6 +99,8 @@ class ZabbixCollector(object):
 
         # automatic host -> instance labeling
         labels_mapping['instance'] = self.host_mapping[item['hostid']]
+        # automatic host_ip -> addr labeling
+        labels_mapping['addr'] = self.host_addr_mapping[item['hostid']]
 
         logger.debug('Converted: %s -> %s [%s]', item['key_'], metric, labels_mapping)
         return {
