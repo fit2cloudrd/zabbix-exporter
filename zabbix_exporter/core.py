@@ -54,10 +54,8 @@ class ZabbixCollector(object):
 
         self.host_mapping = {row['hostid']: row['name']
                              for row in self.zapi.host.get(output=['hostid', 'name'])}
-
         self.host_addr_mapping = {row['hostid']: row['ip']
                              for row in self.zapi.hostinterface.get(output=['hostid', 'ip'])}
-
     def process_metric(self, item):
         if not self.is_exportable(item):
             logger.debug('Dropping unsupported metric %s', item['key_'])
@@ -96,12 +94,10 @@ class ZabbixCollector(object):
             if self.options.get('explicit_metrics', False):
                 logger.debug('Dropping implicit metric name %s', item['key_'])
                 return
-
         # automatic host -> instance labeling
-        labels_mapping['instance'] = self.host_mapping[item['hostid']]
-        # automatic host_ip -> addr labeling
-        labels_mapping['addr'] = self.host_addr_mapping[item['hostid']]
-
+        if self.host_mapping.has_key(item['hostid']):
+            labels_mapping['instance'] = self.host_mapping[item['hostid']]
+            labels_mapping['addr'] = self.host_addr_mapping[item['hostid']]
         logger.debug('Converted: %s -> %s [%s]', item['key_'], metric, labels_mapping)
         return {
             'name': sanitize_key(metric),
@@ -162,3 +158,4 @@ class MetricsHandler(BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):
         return
+                                                                                   
