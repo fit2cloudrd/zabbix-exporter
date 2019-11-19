@@ -158,4 +158,4 @@ class MetricsHandler(BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):
         return
-                                                                                   
+

@@ -5,7 +5,10 @@
 """
 from .compat import StringIO
 from prometheus_client import core
-
+# 处理编码
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 class MetricFamily(core.Metric):
 
@@ -46,7 +49,8 @@ def generate_latest(registry=core.REGISTRY):
                      for k, v in sorted(labels.items())]))
             else:
                 labelstr = ''
-            output.append('{0}{1} {2}{3}\n'.format(name, labelstr, core._floatToGoString(value),
+           # output.append('{0}{1} {2}{3}\n'.format(name, labelstr, core._floatToGoString(value),
+            output.append('{0}{1} {2}{3}\n'.format(name, labelstr, value,
                                                    ' %s' % timestamp if timestamp else ''))
     return ''.join(output).encode('utf-8')
 
